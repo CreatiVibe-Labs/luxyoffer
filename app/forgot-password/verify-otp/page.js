@@ -87,7 +87,7 @@ export default function VerifyOTP() {
                 </h2>
                 <div className='formWrapper'>
                     <form className='form w-1/2 flex flex-col gap-5 mt-5' onSubmit={handleSubmit}>
-                        <div className="flex space-x-2" onPaste={handlePaste}>
+                        <div className="flex space-x-3.5" onPaste={handlePaste}>
                             {otp.map((digit, i) => (
                                 <input
                                     key={i}
@@ -97,7 +97,7 @@ export default function VerifyOTP() {
                                     ref={(el) => (inputs.current[i] = el)}
                                     onChange={(e) => handleChange(e, i)}
                                     onKeyDown={(e) => handleKeyDown(e, i)}
-                                    className="w-12 h-12 text-center border border-gray-300 rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                    className="w-16 h-16 text-center border border-gray-300 rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-black"
                                 />
                             ))}
                         </div>
