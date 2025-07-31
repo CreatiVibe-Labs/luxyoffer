@@ -29,6 +29,7 @@ import {
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import Link from "next/link";
+import {getUser} from "@/utils/auth";
 
 const categories = [
   {
@@ -89,10 +90,11 @@ export default function Example() {
   const isLoginPage = pathname.startsWith('/login');
   const isRegisterPage = pathname.startsWith('/register');
   const isForgotPage = pathname.startsWith('/forgot-password');
+  const user = getUser();
 
-  
 
   useEffect(() => {
+
     const handleScroll = () => {
       if (headerRef.current) {
         const scrollTop = window.scrollY;
@@ -118,7 +120,7 @@ export default function Example() {
   }
   
   return (
-    <header className={`bg-white fixed w-full z-10 transition-all duration-500 ease-in-out ${isSticky ? 'shadow' : ''
+    <header className={`bg-white fixed w-full z-100 transition-all duration-500 ease-in-out ${isSticky ? 'shadow' : ''
       } `} ref={headerRef} style={{
         transitionProperty: 'background-color, transform, box-shadow',
       }}>
@@ -206,7 +208,7 @@ export default function Example() {
           <Link href="#">
             <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z" stroke="#000000" strokeWidth="1.44" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
           </Link>
-          <Link href="#">
+          <Link href={user ? "/profile/wishlist" : "/login"}>
             <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fillRule="evenodd" clipRule="evenodd" d="M12 6.00019C10.2006 3.90317 7.19377 3.2551 4.93923 5.17534C2.68468 7.09558 2.36727 10.3061 4.13778 12.5772C5.60984 14.4654 10.0648 18.4479 11.5249 19.7369C11.6882 19.8811 11.7699 19.9532 11.8652 19.9815C11.9483 20.0062 12.0393 20.0062 12.1225 19.9815C12.2178 19.9532 12.2994 19.8811 12.4628 19.7369C13.9229 18.4479 18.3778 14.4654 19.8499 12.5772C21.6204 10.3061 21.3417 7.07538 19.0484 5.17534C16.7551 3.2753 13.7994 3.90317 12 6.00019Z" stroke="#000000" strokeWidth="1.44" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
           </Link>
           <PopoverGroup className="hidden lg:flex lg:gap-x-12">
@@ -275,8 +277,8 @@ export default function Example() {
               </PopoverPanel>
             </Popover>
           </PopoverGroup>
-          <Link href="/login" className="bg-black text-white pt-3 pb-3 pl-6 pr-6 rounded-md">
-            Log in
+          <Link href={user ? "/profile" : "/login"} className="bg-black text-white pt-3 pb-3 pl-6 pr-6 rounded-md">
+            {user ? "Profile" : "Log in"}
           </Link>
         </div>
       </nav>
@@ -351,12 +353,9 @@ export default function Example() {
                 </a>
               </div>
               <div className="py-6">
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Log in
-                </a>
+                <Link href={ user ? '/profile' : '/login' } className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
+                    { user ? 'Profile' : 'Log in' }
+                </Link>
               </div>
             </div>
           </div>

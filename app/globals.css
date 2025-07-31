@@ -40,3 +40,23 @@
 .animate-fade-in-out {
   animation: fade-in-out 4s ease-in-out forwards;
 }
+
+.error .toastWapper {
+    background: white !important;
+    border: 1px solid red !important;
+    color: red !important;
+}
+
+.error button {
+    color: red !important;
+}
+
+.success .toastWapper {
+    background: white !important;
+    border: 1px solid green !important;
+    color: green !important;
+}
+
+.success button {
+    color: green !important;
+}
