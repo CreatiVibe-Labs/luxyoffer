@@ -277,7 +277,7 @@ export default function Example() {
               </PopoverPanel>
             </Popover>
           </PopoverGroup>
-          <Link href={user ? "/profile" : "/login"} className="bg-black text-white pt-3 pb-3 pl-6 pr-6 rounded-md">
+          <Link href={user ? "/profile/personal-info" : "/login"} className="bg-black text-white pt-3 pb-3 pl-6 pr-6 rounded-md">
             {user ? "Profile" : "Log in"}
           </Link>
         </div>

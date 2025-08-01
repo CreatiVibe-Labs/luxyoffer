@@ -60,3 +60,14 @@
 .success button {
     color: green !important;
 }
+
+.profileSidebarLink.active {
+    background-color: black;
+    color: white
+}
+
+input.disabled {
+    background: #8080801c;
+    user-select: none;
+    pointer-events: none;
+}
