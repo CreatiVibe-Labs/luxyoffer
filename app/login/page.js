@@ -8,8 +8,10 @@ import { API } from '@/utils/api';
 import Toast from '@/components/global/Toast';
 import { useRouter } from 'next/navigation';
 import { setAuthData } from "@/utils/auth";
+import LoadingSVG from '@/components/global/LoadingSVG';
 
 export default function Login() {
+    const [isLoading, setIsLoading] = useState(false);
     const [show, setShow] = useState(false);
     const [emailAddress, setEmailAddress] = useState('');
     const [password, setPassword] = useState('');
@@ -33,10 +35,11 @@ export default function Login() {
     const handleLogin = async (e) => {
 
         e.preventDefault();
-
+        setIsLoading(true);
         const res = await API.login({ 'email': emailAddress, 'password': password });
-        
+
         if (res.success) {
+            setIsLoading(false);
             showToastMsg(res.message.message, 'success');
 
             setAuthData({
@@ -48,6 +51,7 @@ export default function Login() {
             router.push('/');
 
         } else {
+            setIsLoading(false);
             showToastMsg(res.message, 'error');
         }
     }
@@ -110,7 +114,9 @@ export default function Login() {
                             <Link href="/forgot-password" className='text-sm'>Forgot Password?</Link>
                         </div>
                         <div className='fieldGroup'>
-                            <input type='submit' value="Login" className='border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer' />
+                            <button type="submit" disabled={isLoading} className="border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer text-center flex justify-center">
+                                {isLoading ? <LoadingSVG /> : 'Login'}
+                            </button>
                             <div className='flex gap-2 mt-2'><p>Don't have an account?</p><Link href="/register" className='font-semibold'>Register Here</Link></div>
                         </div>
                         <p className='text-center'>OR</p>

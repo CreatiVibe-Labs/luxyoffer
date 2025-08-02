@@ -8,9 +8,12 @@ import { API } from '@/utils/api';
 import Toast from '@/components/global/Toast';
 import { useRouter } from 'next/navigation';
 import { setAuthData } from "@/utils/auth";
+import LoadingSVG from '@/components/global/LoadingSVG';
 
 
 export default function Register() {
+    const [isLoading, setIsLoading] = useState(false);
+
     const [show, setShow] = useState(false);
     const [show2, setShow2] = useState(false);
     const [firstName, setFirstName] = useState('');
@@ -36,12 +39,13 @@ export default function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-
+        setIsLoading(true);
         const res = await API.register({ 'first_name': firstName, 'last_name': lastName, 'email': emailAddress, 'password': password, 'password_confirmation': passwordConfirmation });
 
         if (res.success) {
+            setIsLoading(false);
             showToastMsg(res.message.message, 'success');
-            
+
             setAuthData({
                 token: res.message.token,
                 user: res.message.user,
@@ -51,6 +55,7 @@ export default function Register() {
             router.push('/');
 
         } else {
+            setIsLoading(false);
             showToastMsg(res.message, 'error');
         }
     }
@@ -105,7 +110,9 @@ export default function Register() {
                             </div>
                         </div>
                         <div className='fieldGroup'>
-                            <input type='submit' value="Register" className='border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer' />
+                            <button type="submit" disabled={isLoading} className="border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer text-center flex justify-center">
+                                {isLoading ? <LoadingSVG /> : 'Register'}
+                            </button>
                             <div className='flex gap-2 mt-2'><p>Already have an account?</p><Link href="/login" className='font-semibold'>Login Here</Link></div>
                         </div>
                         <p className='text-center'>OR</p>

@@ -4,19 +4,48 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { API } from '@/utils/api';
+import LoadingSVG from '@/components/global/LoadingSVG';
+import Toast from '@/components/global/Toast';
+import Cookies from 'js-cookie';
 
 export default function ForgotPassword() {
+    const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
+
+    const [toastMessage, setToastMessage] = useState('');
+    const [showToast, setShowToast] = useState(false);
+    const [toastCondition, setToastCondition] = useState('');
+
+    const showToastMsg = (msg, condition) => {
+        setToastMessage(msg);
+        setToastCondition(condition);
+        setShowToast(true);
+
+        // Auto-hide after 3s
+        setTimeout(() => setShowToast(false), 3000);
+    };
 
     const router = useRouter();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Submitted Email:', email);
+        setIsLoading(true);
 
+        const res = await API.forgotPassword({ 'email': email });
 
-        // Redirect to another page
-        router.push('/forgot-password/verify-otp'); 
+        if (res.success) {
+            setIsLoading(false);
+            showToastMsg(res.message.message, 'success');
+            
+            Cookies.set('fp_email', email, { expires: 1 / 72 }); // 20 minutes
+
+            router.push('/forgot-password/verify-otp');
+
+        } else {
+            setIsLoading(false);
+            showToastMsg(res.message, 'error');
+        }
     };
 
     return (
@@ -53,16 +82,19 @@ export default function ForgotPassword() {
                     <form className='form w-1/2 flex flex-col gap-5 mt-5' onSubmit={handleSubmit}>
                         <div className='fieldGroup flex flex-col'>
                             <label className='label text-gray-700' htmlFor="email">Email Address:</label>
-                            <input type='email' id='email' placeholder='Please Enter Your Email Address' className='border rounded-md outline-0 p-2'  value={email} onChange={(e) => setEmail(e.target.value)} />
+                            <input type='email' id='email' placeholder='Please Enter Your Email Address' className='border rounded-md outline-0 p-2' value={email} onChange={(e) => setEmail(e.target.value)} />
                         </div>
                         <div className='fieldGroup'>
-                            <input type='submit' value="Send OTP" className='border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer' />
+                            <button type="submit" disabled={isLoading} className="border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer text-center flex justify-center">
+                                {isLoading ? <LoadingSVG /> : 'Send OTP'}
+                            </button>
                         </div>
                         <p className='text-center'>OR</p>
                         <Link href="/" className='border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer text-center '>Go To Home Page</Link>
                     </form>
                 </div>
             </div>
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} condition={toastCondition} />}
         </div>
     );
 }
