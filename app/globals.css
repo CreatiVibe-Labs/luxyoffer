@@ -22,6 +22,7 @@
     display: flex !important;
     gap: 15px !important;
 }
+
 .text-custom-grey {
     color: #E8E8E8 !important;
 }
@@ -31,14 +32,29 @@
 }
 
 @keyframes fade-in-out {
-  0% { opacity: 0; transform: translateY(20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(20px); }
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
 }
 
 .animate-fade-in-out {
-  animation: fade-in-out 4s ease-in-out forwards;
+    animation: fade-in-out 4s ease-in-out forwards;
 }
 
 .error .toastWapper {
@@ -66,8 +82,23 @@
     color: white
 }
 
+.profileSidebarLink.active svg path {
+    stroke: white;
+}
+
 input.disabled {
     background: #8080801c;
     user-select: none;
     pointer-events: none;
+}
+
+.profileSidebarLink.active .svgA {
+    stroke: white;
+}
+
+.svgA {
+    fill: none;
+    stroke: #000000;
+    strokeLinecap: round;
+    strokeLinejoin: round;
 }

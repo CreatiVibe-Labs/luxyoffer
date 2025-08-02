@@ -4,10 +4,27 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
+import { API } from '@/utils/api';
+import Toast from '@/components/global/Toast';
+import LoadingSVG from '@/components/global/LoadingSVG';
 
 export default function VerifyOTP() {
     const inputs = useRef([]);
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [toastMessage, setToastMessage] = useState('');
+    const [showToast, setShowToast] = useState(false);
+    const [toastCondition, setToastCondition] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const showToastMsg = (msg, condition) => {
+        setToastMessage(msg);
+        setToastCondition(condition);
+        setShowToast(true);
+
+        // Auto-hide after 3s
+        setTimeout(() => setShowToast(false), 3000);
+    };
 
     const handleChange = (e, index) => {
         const value = e.target.value.replace(/\D/, '');
@@ -18,8 +35,6 @@ export default function VerifyOTP() {
         if (value && index < 5) {
             inputs.current[index + 1].focus();
         }
-
-        console.log('OTP:', newOtp.join(''));
     };
 
     const handleKeyDown = (e, index) => {
@@ -46,13 +61,38 @@ export default function VerifyOTP() {
 
     const router = useRouter();
 
-    const handleSubmit = (e) => {
+    const goToBack = (e) => {
         e.preventDefault();
-        console.log('OTP:', otp);
+        Cookies.remove('fp_email');
+        router.push('/forgot-password/');
+    }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const email = Cookies.get('fp_email');
+        setIsLoading(true);
 
-        // Redirect to another page
-        router.push('/forgot-password/reset-password');
+        if (!email) {
+            setIsLoading(false);
+            showToastMsg('Invalid OTP or Expired!', 'error');
+        }
+
+        if (email) {
+
+            const res = await API.verifyOtp({ 'email': email, 'otp': otp });
+
+            if (res.success) {
+                setIsLoading(false);
+                showToastMsg(res.message.message, 'success');
+
+                setTimeout(() => router.push('/forgot-password/reset-password'), 1000);
+
+            } else {
+                setIsLoading(false);
+                showToastMsg(res.message, 'error');
+            }
+        }
+
     };
 
     return (
@@ -61,7 +101,7 @@ export default function VerifyOTP() {
                 <Image src="/images/otp-image.png" width={6000} height={6000} className='h-[100vh] object-cover' alt="login-image" />
             </div>
             <div className='contentWrapper flex flex-col justify-center pl-10 w-1/2'>
-                <Link href="/forgot-password" className='mb-2 font-medium flex items-center'>
+                <span onClick={goToBack} className='cursor-pointer mb-2 font-medium flex items-center'>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -81,18 +121,19 @@ export default function VerifyOTP() {
                         />
                     </svg>
                     Back
-                </Link>
+                </span>
                 <h2 className='flex items-center font-semibold text-3xl'>
                     Enter OTP
                 </h2>
                 <div className='formWrapper'>
-                    <form className='form w-1/2 flex flex-col gap-5 mt-5' onSubmit={handleSubmit}>
+                    <form className='form w-2/3 flex flex-col gap-5 mt-5' onSubmit={handleSubmit}>
                         <div className="flex space-x-3.5" onPaste={handlePaste}>
                             {otp.map((digit, i) => (
                                 <input
                                     key={i}
                                     type="text"
                                     maxLength="1"
+                                    required
                                     value={otp[i]}
                                     ref={(el) => (inputs.current[i] = el)}
                                     onChange={(e) => handleChange(e, i)}
@@ -102,13 +143,16 @@ export default function VerifyOTP() {
                             ))}
                         </div>
                         <div className='fieldGroup'>
-                            <input type='submit' value="Verify OTP" className='border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer' />
+                            <button type="submit" disabled={isLoading} className="border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer text-center flex justify-center">
+                                {isLoading ? <LoadingSVG /> : 'Verify OTP'}
+                            </button>
                         </div>
                         <p className='text-center'>OR</p>
                         <Link href="/" className='border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer text-center '>Go To Home Page</Link>
                     </form>
                 </div>
             </div>
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} condition={toastCondition} />}
         </div>
     );
 }

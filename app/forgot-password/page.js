@@ -38,9 +38,9 @@ export default function ForgotPassword() {
             setIsLoading(false);
             showToastMsg(res.message.message, 'success');
             
-            Cookies.set('fp_email', email, { expires: 1 / 72 }); // 20 minutes
+            Cookies.set('fp_email', email, { expires: 1 / 72 });
 
-            router.push('/forgot-password/verify-otp');
+            setTimeout(() => router.push('/forgot-password/verify-otp'), 1000);
 
         } else {
             setIsLoading(false);
@@ -54,7 +54,7 @@ export default function ForgotPassword() {
                 <Image src="/images/forgot-image.png" width={6000} height={6000} className='h-[100vh] object-cover' alt="login-image" />
             </div>
             <div className='contentWrapper flex flex-col justify-center pl-10 w-1/2'>
-                <Link href="/login" className='mb-2 font-medium flex items-center'>
+                <Link href="/login" className='cursor-pointer mb-2 font-medium flex items-center'>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -79,10 +79,10 @@ export default function ForgotPassword() {
                     Forgot Password
                 </h2>
                 <div className='formWrapper'>
-                    <form className='form w-1/2 flex flex-col gap-5 mt-5' onSubmit={handleSubmit}>
+                    <form className='form w-2/3 flex flex-col gap-5 mt-5' onSubmit={handleSubmit}>
                         <div className='fieldGroup flex flex-col'>
                             <label className='label text-gray-700' htmlFor="email">Email Address:</label>
-                            <input type='email' id='email' placeholder='Please Enter Your Email Address' className='border rounded-md outline-0 p-2' value={email} onChange={(e) => setEmail(e.target.value)} />
+                            <input required type='email' id='email' placeholder='Please Enter Your Email Address' className='border rounded-md outline-0 p-2' value={email} onChange={(e) => setEmail(e.target.value)} />
                         </div>
                         <div className='fieldGroup'>
                             <button type="submit" disabled={isLoading} className="border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer text-center flex justify-center">

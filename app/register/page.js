@@ -70,23 +70,25 @@ export default function Register() {
                     Create New Account
                 </h2>
                 <div className='formWrapper'>
-                    <form className='form w-1/2 flex flex-col gap-5 mt-5' onSubmit={handleRegister}>
-                        <div className='fieldGroup flex flex-col'>
-                            <label className='label text-gray-700' htmlFor="first">First Name:</label>
-                            <input type='text' id='first' value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder='Please Enter Your First Name' className='border rounded-md outline-0 p-2' />
-                        </div>
-                        <div className='fieldGroup flex flex-col'>
-                            <label className='label text-gray-700' htmlFor="last">Last Name:</label>
-                            <input type='text' id='last' value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder='Please Enter Your Last Name' className='border rounded-md outline-0 p-2' />
+                    <form className='form w-2/3 flex flex-col gap-5 mt-5' onSubmit={handleRegister}>
+                        <div className='flex gap-5'>
+                            <div className='w-full fieldGroup flex flex-col'>
+                                <label className='label text-gray-700' htmlFor="first">First Name:</label>
+                                <input type='text' required id='first' value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder='Please Enter Your First Name' className='border rounded-md outline-0 p-2' />
+                            </div>
+                            <div className='w-full fieldGroup flex flex-col'>
+                                <label className='label text-gray-700' htmlFor="last">Last Name:</label>
+                                <input type='text' id='last' value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder='Please Enter Your Last Name' className='border rounded-md outline-0 p-2' />
+                            </div>
                         </div>
                         <div className='fieldGroup flex flex-col'>
                             <label className='label text-gray-700' htmlFor="email">Email Address:</label>
-                            <input type='email' id='email' value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} placeholder='Please Enter Your Email Address' className='border rounded-md outline-0 p-2' />
+                            <input type='email' id='email' required value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} placeholder='Please Enter Your Email Address' className='border rounded-md outline-0 p-2' />
                         </div>
                         <div className='fieldGroup flex flex-col'>
                             <label className='label text-gray-700' htmlFor="password">Password:</label>
                             <div className='passwordField relative flex flex-col items-end justify-center'>
-                                <input type={show ? 'text' : 'password'} id='password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Please Enter Your Password' className='w-full border rounded-md outline-0 p-2' />
+                                <input type={show ? 'text' : 'password'} required id='password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Please Enter Your Password' className='w-full border rounded-md outline-0 p-2' />
                                 <button
                                     type="button"
                                     onClick={() => setShow((prev) => !prev)}
@@ -99,7 +101,7 @@ export default function Register() {
                         <div className='fieldGroup flex flex-col'>
                             <label className='label text-gray-700' htmlFor="confirm_password">Confirm Password:</label>
                             <div className='passwordField relative flex flex-col items-end justify-center'>
-                                <input type={show2 ? 'text' : 'password'} id='confirm_password' value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} placeholder='Please Confirm Your Password' className='w-full border rounded-md outline-0 p-2' />
+                                <input type={show2 ? 'text' : 'password'} required id='confirm_password' value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} placeholder='Please Confirm Your Password' className='w-full border rounded-md outline-0 p-2' />
                                 <button
                                     type="button"
                                     onClick={() => setShow2((prev) => !prev)}

@@ -4,14 +4,61 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
+import Toast from '@/components/global/Toast';
+import LoadingSVG from '@/components/global/LoadingSVG';
+import { API } from '@/utils/api';
 
 export default function VerifyOTP() {
     const [show, setShow] = useState(false);
     const [show2, setShow2] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [showToast, setShowToast] = useState(false);
+    const [toastCondition, setToastCondition] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [password, setPassword] = useState('');
+    const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const showToastMsg = (msg, condition) => {
+        setToastMessage(msg);
+        setToastCondition(condition);
+        setShowToast(true);
+
+        // Auto-hide after 3s
+        setTimeout(() => setShowToast(false), 3000);
     };
+
+    const router = useRouter();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const email = Cookies.get('fp_email');
+        setIsLoading(true);
+
+        if (email) {
+
+            const res = await API.resetPassword({ 'email': email, 'password_confirmation':passwordConfirmation, 'password':password });
+
+            if (res.success) {
+                setIsLoading(false);
+                showToastMsg(res.message.message, 'success');
+                Cookies.remove('fp_email');
+                setTimeout(() => router.push('/login'), 1000);
+
+            } else {
+                setIsLoading(false);
+                showToastMsg(res.message, 'error');
+            }
+            setIsLoading(false);
+        }
+    };
+
+    const goToBack = (e) => {
+        e.preventDefault();
+        Cookies.remove('fp_email');
+        router.push('/forgot-password/');
+    }
 
     return (
         <div className="w-full flex mt-[-7rem]">
@@ -19,7 +66,7 @@ export default function VerifyOTP() {
                 <Image src="/images/otp-image.png" width={6000} height={6000} className='h-[100vh] object-cover' alt="login-image" />
             </div>
             <div className='contentWrapper flex flex-col justify-center pl-10 w-1/2'>
-                <Link href="/forgot-password" className='mb-2 font-medium flex items-center'>
+                <span onClick={goToBack} className='cursor-pointer mb-2 font-medium flex items-center'>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -39,16 +86,16 @@ export default function VerifyOTP() {
                         />
                     </svg>
                     Back
-                </Link>
+                </span>
                 <h2 className='flex items-center font-semibold text-3xl'>
                     Reset Password
                 </h2>
                 <div className='formWrapper'>
-                    <form className='form w-1/2 flex flex-col gap-5 mt-5' onSubmit={handleSubmit}>
+                    <form className='form w-2/3 flex flex-col gap-5 mt-5' onSubmit={handleSubmit}>
                         <div className='fieldGroup flex flex-col'>
                             <label className='label text-gray-700' htmlFor="password">New Password:</label>
                             <div className='passwordField relative flex flex-col items-end justify-center'>
-                                <input type={show ? 'text' : 'password'} id='password' placeholder='Please Enter Your New Password' className='w-full border rounded-md outline-0 p-2' />
+                                <input type={show ? 'text' : 'password'} required id='password' onChange={(e) => setPassword(e.target.value)} placeholder='Please Enter Your New Password' className='w-full border rounded-md outline-0 p-2' />
                                 <button
                                     type="button"
                                     onClick={() => setShow((prev) => !prev)}
@@ -61,7 +108,7 @@ export default function VerifyOTP() {
                         <div className='fieldGroup flex flex-col'>
                             <label className='label text-gray-700' htmlFor="confirm_password">Confirm Password:</label>
                             <div className='passwordField relative flex flex-col items-end justify-center'>
-                                <input type={show2 ? 'text' : 'password'} id='confirm_password' placeholder='Please Confirm Your Password' className='w-full border rounded-md outline-0 p-2' />
+                                <input type={show2 ? 'text' : 'password'} required id='confirm_password' onChange={(e) => setPasswordConfirmation(e.target.value)} placeholder='Please Confirm Your Password' className='w-full border rounded-md outline-0 p-2' />
                                 <button
                                     type="button"
                                     onClick={() => setShow2((prev) => !prev)}
@@ -72,13 +119,16 @@ export default function VerifyOTP() {
                             </div>
                         </div>
                         <div className='fieldGroup'>
-                            <input type='submit' value="Reset Password" className='border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer' />
+                            <button type="submit" disabled={isLoading} className="border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer text-center flex justify-center">
+                                {isLoading ? <LoadingSVG /> : 'Reset Password'}
+                            </button>
                         </div>
                         <p className='text-center'>OR</p>
                         <Link href="/" className='border rounded-md bg-black text-white w-full pt-3 pb-3 cursor-pointer text-center '>Go To Home Page</Link>
                     </form>
                 </div>
             </div>
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} condition={toastCondition} />}
         </div>
     );
 }

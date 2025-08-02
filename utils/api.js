@@ -1,4 +1,5 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import Cookies from 'js-cookie';
 
 export const API = {
     register: (data) => hitAPI('register', data, 'POST'),
@@ -16,6 +17,37 @@ async function hitAPI(endpoint, data, method, token = null) {
             ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+        let finalMessage = 'Something went wrong';
+
+        if (result.errors) {
+            // Get the first field's first error
+            const firstField = Object.keys(result.errors)[0];
+            finalMessage = result.errors[firstField][0] || finalMessage;
+        } else if (result.message) {
+            finalMessage = result.message;
+        }
+
+        return { 'success': false, 'message': finalMessage };
+    }
+
+    return { 'success': true, 'message': result };
+}
+
+export async function logOut() {
+
+    const token = Cookies.get("authToken");
+     
+    const res = await fetch(`${BASE_URL}logout`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
+        }
     });
 
     const result = await res.json();
