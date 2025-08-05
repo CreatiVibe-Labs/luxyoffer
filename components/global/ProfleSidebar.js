@@ -37,6 +37,7 @@ export default function ProfileSidebar() {
         }
 
     }, []);
+    
     const showToastMsg = (msg, condition) => {
         setToastMessage(msg);
         setToastCondition(condition);
@@ -59,6 +60,7 @@ export default function ProfileSidebar() {
 
             Cookies.remove("authToken");
             Cookies.remove("authUser");
+            Cookies.remove("expiry");
 
             setTimeout(() => router.push('/'), 1000);
 

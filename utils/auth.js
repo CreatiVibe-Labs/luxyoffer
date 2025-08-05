@@ -12,6 +12,7 @@ export const setAuthData = ({ token, user, rememberMe }) => {
 
     Cookies.set("authToken", token, options);
     Cookies.set("authUser", JSON.stringify(user), options);
+    Cookies.set("rememberMe", rememberMe, options);
 };
 
 // Get token

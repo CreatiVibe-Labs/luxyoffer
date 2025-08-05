@@ -7,16 +7,25 @@ export const API = {
     forgotPassword: (data) => hitAPI('forgot-password', data, 'POST'),
     verifyOtp: (data) => hitAPI('verify-otp', data, 'POST'),
     resetPassword: (data) => hitAPI('reset-password', data, 'POST'),
+    profileUpdate: (data) => hitAPI('my-profile/save-personal-info', data, 'POST', 'yes'),
+    profilePhotoUpdate: (data) => hitAPI('my-profile/save-profile-photo', data, 'POST', 'yes'),
 };
 
 async function hitAPI(endpoint, data, method, token = null) {
+
+    if ( token == 'yes' ) {
+        token = Cookies.get("authToken");
+    }
+
+    const isFormData = data instanceof FormData;
+
     const res = await fetch(`${BASE_URL}${endpoint}`, {
         method: method,
         headers: {
             'Content-Type': 'application/json',
             ...(token && { Authorization: `Bearer ${token}` }),
         },
-        body: JSON.stringify(data),
+        body: isFormData ? data : JSON.stringify(data),
     });
 
     const result = await res.json();
