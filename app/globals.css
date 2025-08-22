@@ -102,3 +102,7 @@ input.disabled {
     strokeLinecap: round;
     strokeLinejoin: round;
 }
+
+.slick-track {
+    padding-bottom: 20px;
+}
